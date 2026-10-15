@@ -61,7 +61,7 @@
     const H=tankHeight(), Q=flow()/60000, A=area();
     // Dynamic material balance for a vertical cylinder, with the outlet closed:
     // A dh/dt = Qin; integrate the measured wall-clock step and clamp at tank capacity.
-    if(level < H && Q > 0) { level=Math.min(H,level+(Q/A)*dt); elapsed+=dt; pushPoint(); }
+    if(level < H) { if(Q > 0) level=Math.min(H,level+(Q/A)*dt); elapsed+=dt; pushPoint(); }
     if(level>=H){level=H;running=false;lastTick=null;setStatus("TANK FULL","bad");$("ptStart").textContent="▶ Start filling";notice("Tank reached its configured maximum level. Pump filling is paused by the estimator.");}
     else setStatus("DYNAMIC MODEL RUNNING","good");
     render();
