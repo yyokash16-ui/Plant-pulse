@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Local-only PlantPulse server and safe proxy for the existing DWSIM HX1 bridge."""
 from __future__ import annotations
-import json, os, threading, time, urllib.error, urllib.request
+import json, os, threading, time, urllib.error, urllib.request, webbrowser
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from urllib.parse import urlparse
@@ -99,7 +99,8 @@ if __name__ == "__main__":
     print(f"Open: http://{HOST}:{PORT}")
     print(f"Existing DWSIM bridge: {BRIDGE_URL}")
     print("Local-only listener. Keep DWSIM open and start your existing HX1 bridge.")
-    print("Press Ctrl+C to stop.\n")
+    print("Opening the dashboard in your default browser. Press Ctrl+C to stop.\\n")
+    threading.Timer(1.0, lambda: webbrowser.open(f"http://{HOST}:{PORT}")).start()
     try:
         ThreadingHTTPServer((HOST, PORT), Handler).serve_forever()
     except KeyboardInterrupt:
