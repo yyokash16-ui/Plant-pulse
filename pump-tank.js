@@ -103,7 +103,7 @@
       dwsim.time=findCanonical(body,["simulation_time_s","simulationTimeS"]);
       if(dwsim.flow!==null) $("ptFlow").value=String(dwsim.flow);
       $("ptBridgeState").textContent="BRIDGE RESPONDS";$("ptBridgeState").className="state good";
-      $("ptBridgeMessage").textContent=(dwsim.flow!==null||dwsim.level!==null)?"Canonical pump/tank tag(s) detected in the HX1 bridge response.":"The bridge responds, but no canonical pump/tank tags were found. Entered pump flow drives the local level estimate.";
+      $("ptBridgeMessage").textContent=(dwsim.flow!==null||dwsim.level!==null)?"Canonical pump/tank tag(s) detected in the bridge response.":"The bridge responds, but no canonical pump/tank tags were found. Entered pump flow drives the local level estimate.";
       $("ptRaw").textContent=JSON.stringify(body,null,2);
     } catch(e) {
       dwsim.connected=false;dwsim.flow=null;dwsim.level=null;dwsim.time=null;
