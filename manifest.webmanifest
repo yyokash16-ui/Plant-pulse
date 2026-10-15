@@ -1,15 +1,28 @@
 {
   "id": "./",
-  "name": "PlantPulse Digital Twin",
+  "name": "PlantPulse DWSIM Digital Twin",
   "short_name": "PlantPulse",
-  "description": "Plant equipment digital twin dashboard and demo monitoring interface",
+  "description": "Local dashboard for the DWSIM HX1 heat exchanger simulation",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
   "orientation": "any",
   "background_color": "#0d151c",
   "theme_color": "#101820",
-  "icons": [{"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}],
-  "categories": ["utilities","productivity"]
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": [
+    "utilities",
+    "productivity"
+  ]
 }
