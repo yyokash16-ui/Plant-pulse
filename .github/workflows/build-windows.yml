@@ -15,8 +15,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Validate Python bridge server
-        run: python -m py_compile server.py
+      - name: Validate both local servers
+        run: python -m py_compile server.py central_server.py
       - name: Set up Node for JavaScript syntax checks
         uses: actions/setup-node@v4
         with:
@@ -41,13 +41,23 @@ jobs:
           }
       - name: Install PyInstaller
         run: python -m pip install --upgrade pyinstaller
-      - name: Build one-file Windows application
+      - name: Build legacy Windows application
         shell: cmd
         run: pyinstaller --noconfirm --clean --onefile --windowed --name PlantPulse --add-data "index.html;." --add-data "manifest.webmanifest;." --add-data "icon.svg;." --add-data "sw.js;." server.py
-      - name: Upload Windows application
+      - name: Build central Windows application
+        shell: cmd
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name PlantPulse-Central --add-data "index.html;." --add-data "manifest.webmanifest;." --add-data "icon.svg;." --add-data "sw.js;." central_server.py
+      - name: Upload legacy Windows application
         uses: actions/upload-artifact@v4
         with:
           name: PlantPulse-Windows
           path: dist/PlantPulse.exe
+          if-no-files-found: error
+          retention-days: 30
+      - name: Upload central Windows application
+        uses: actions/upload-artifact@v4
+        with:
+          name: PlantPulse-Central-Windows
+          path: dist/PlantPulse-Central.exe
           if-no-files-found: error
           retention-days: 30
