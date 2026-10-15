@@ -53,7 +53,7 @@ class Handler(SimpleHTTPRequestHandler):
                                  "bridge_url": BRIDGE_URL, "bridge_host_restricted": True,
                                  "time": time.strftime("%Y-%m-%dT%H:%M:%S%z")})
             return
-        routes = {"/api/bridge/status": "/api/status", "/api/bridge/hx1": "/api/hx1"}
+        routes = {"/api/bridge/status": "/api/status", "/api/bridge/hx1": "/api/hx1", "/api/bridge/pumptank": "/api/pumptank"}
         if path in routes:
             try:
                 code, data = bridge_request(routes[path])
