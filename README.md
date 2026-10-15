@@ -31,7 +31,7 @@ The dashboard recognizes the previous HX1 schema: `hot_in`, `hot_out`, `cold_in`
 
 The controls page requires enabling writes, entering a JSON object and confirming every request. Prior bridge iterations used temperature fields such as `hot_in_C` and `cold_in_C`; check your installed bridge code before using those names. This application is for DWSIM simulation interaction, not live plant control.
 
-## Limitations and safety
+## Get the Windows app\n\nA Windows executable is built automatically by GitHub Actions after changes to `main`. Open the repository **Actions** tab, select **Build PlantPulse Windows App**, open the latest successful run, and download the `PlantPulse-Windows` artifact. Extract it and run `PlantPulse.exe`. Keep DWSIM and your existing HX1 bridge running.\n\n## Limitations and safety
 
 - Your existing bridge must be running and attached to the intended DWSIM flowsheet.
 - If a write reaches the bridge but DWSIM does not update, inspect bridge object bindings and recalculation logic.
