@@ -102,13 +102,13 @@
       dwsim.level=findCanonical(body,["tank_level_m","tankLevelM"]);
       dwsim.time=findCanonical(body,["simulation_time_s","simulationTimeS"]);
       if(dwsim.flow!==null) $("ptFlow").value=String(dwsim.flow);
-      $("ptBridgeState").textContent="BRIDGE RESPONDS";$("ptBridgeState").className="state good";
-      $("ptBridgeMessage").textContent=(dwsim.flow!==null||dwsim.level!==null)?"Canonical pump/tank tag(s) detected in the bridge response.":"The bridge responds, but no canonical pump/tank tags were found. Entered pump flow drives the local level estimate.";
+      $("ptBridgeState").textContent="CENTRAL SERVER RECEIVED DATA";$("ptBridgeState").className="state good";
+      $("ptBridgeMessage").textContent=(dwsim.flow!==null||dwsim.level!==null)?"Canonical pump/tank tag(s) detected in central-server telemetry.":"Central server has telemetry, but no canonical pump/tank tags were found. Entered pump flow drives the local level estimate.";
       $("ptRaw").textContent=JSON.stringify(body,null,2);
     } catch(e) {
       dwsim.connected=false;dwsim.flow=null;dwsim.level=null;dwsim.time=null;
       $("ptBridgeState").textContent="NOT CONNECTED";$("ptBridgeState").className="state warn";
-      $("ptBridgeMessage").textContent="No response from the pump/tank or HX1 bridge endpoints. Start PlantPulse and the local bridge at 127.0.0.1:8765. The local model can still be explored independently.";
+      $("ptBridgeMessage").textContent="No recent pump/tank telemetry received by the central server. Start start_central_server.bat and connect a DWSIM adapter that posts to port 8770. The local model can still be explored independently.";
       $("ptRaw").textContent="No bridge response: "+e.message;
     }
     render();
