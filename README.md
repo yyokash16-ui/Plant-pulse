@@ -1,24 +1,45 @@
-# PlantPulse Digital Twin
+# PlantPulse — DWSIM Digital Twin
 
-Mobile-first industrial equipment monitoring prototype for pump P-101.
+PlantPulse is a responsive dashboard for your DWSIM HX1 heat-exchanger simulation. It reads telemetry from the existing local HX1 HTTP bridge, shows live bridge values and raw JSON, and can optionally send a user-supplied JSON update.
 
-## Demo features
-- Responsive phone and desktop interface
-- Synthetic sample readings refresh every five seconds
-- Scenario selection: normal, high vibration, low suction pressure, high bearing temperature and low flow
-- Rule-based illustrative alerts and recommended checks
-- Equipment details, trends, event notes and CSV exports
-- Optional Supabase endpoint reachability test
-- Installable Progressive Web App (PWA), with offline app shell after first successful visit
+## Start on Windows
 
-## Important limitations
-All readings are generated demonstration data. This app is not connected to a real plant, PLC, SCADA, sensors or DWSIM. Thresholds and diagnosis are illustrative only and must be validated by qualified site engineers. Not for safety-critical decisions or equipment control. The prototype does not currently persist telemetry to Supabase.
+1. Install Python 3.10 or newer.
+2. Open DWSIM and load the intended simulation.
+3. Start your existing HX1 bridge. Default endpoints:
+   - `GET http://127.0.0.1:8765/api/status`
+   - `GET http://127.0.0.1:8765/api/hx1`
+   - `POST http://127.0.0.1:8765/api/hx1/set`
+4. Double-click `start_plantpulse.bat`.
+5. Open `http://127.0.0.1:8766` in Edge or Chrome.
 
-## Deploy on GitHub Pages
-The workflow in `.github/workflows/pages.yml` deploys this repository's root on pushes to `main`. In GitHub, open **Settings → Pages** and confirm GitHub Actions is the publishing source. Then open:
-`https://yyokash16-ui.github.io/Plant-pulse/`
+PlantPulse's Python server proxies the bridge API on the same local origin. It binds to `127.0.0.1` only and does not expose the dashboard to your LAN.
 
-After opening it once online, use Microsoft Edge or Chrome's **Install PlantPulse** option to add it as a desktop app.
+## Features
 
-## Production integration path
-Use an authorized industrial edge gateway to send validated sensor data through an authenticated backend API. Do not expose PLC/SCADA networks or unauthenticated control APIs to the internet. The dashboard should remain read-only for process control. Never expose a Supabase service-role key in browser code.
+- HX1 hot/cold inlet and outlet temperatures.
+- Heat duty, pressure and mass flow when present in the bridge response.
+- Raw JSON viewer and numeric variable table for debugging.
+- Connection diagnostics and CSV export of local-session values.
+- Optional write-through to `/api/hx1/set`, disabled by default and guarded by a confirmation dialog.
+
+## Expected telemetry
+
+The dashboard recognizes the previous HX1 schema: `hot_in`, `hot_out`, `cold_in`, `cold_out` objects with `T_C`, `P_Pa`, and `W_kg_s`, plus `duty_kW`. If your bridge returns different fields, raw JSON and detected numeric values are still displayed. Verify actual fields and units against the running bridge.
+
+## Writing values
+
+The controls page requires enabling writes, entering a JSON object and confirming every request. Prior bridge iterations used temperature fields such as `hot_in_C` and `cold_in_C`; check your installed bridge code before using those names. This application is for DWSIM simulation interaction, not live plant control.
+
+## Limitations and safety
+
+- Your existing bridge must be running and attached to the intended DWSIM flowsheet.
+- If a write reaches the bridge but DWSIM does not update, inspect bridge object bindings and recalculation logic.
+- GitHub Pages cannot run Python or connect to a process on your PC. Use the local URL above for DWSIM connectivity.
+- Simulation data is not plant instrumentation. Do not use this for safety-critical decisions or expose control endpoints publicly.
+
+## Troubleshooting
+
+- Confirm `http://127.0.0.1:8765/api/status` opens while DWSIM and the HX1 bridge are running.
+- If port 8766 is occupied, close the other process or set `PLANTPULSE_PORT`.
+- To change the bridge port, set `DWSIM_BRIDGE_URL` before launching `server.py`.
