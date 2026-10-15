@@ -6,7 +6,7 @@
   let history = [], dwsim = { connected: false, flow: null, level: null, time: null, payload: null };
   const area = () => Math.PI * Math.pow(Number($("ptDiameter").value), 2) / 4;
   const tankHeight = () => Number($("ptHeight").value);
-  const flow = () => Math.max(0, Number($("ptFlow").value) || 0);
+  const flow = () => Math.max(0, dwsim && dwsim.connected && dwsim.flow !== null ? dwsim.flow : (Number($("ptFlow").value) || 0));
   const valid = () => Number($("ptDiameter").value) > 0 && tankHeight() > 0 &&
     Number($("ptInitial").value) >= 0 && Number($("ptInitial").value) <= tankHeight() && flow() >= 0;
   const fmt = (n, d=3) => Number.isFinite(n) ? n.toFixed(d) : "—";
@@ -93,20 +93,22 @@
   }
   async function pollBridge(){
     try {
-      const r=await fetch("/api/bridge/hx1",{cache:"no-store"}); const body=await r.json();
+      let r=await fetch("/api/bridge/pumptank",{cache:"no-store"}); let body=await r.json();
+      if(!r.ok){r=await fetch("/api/bridge/hx1",{cache:"no-store"});body=await r.json();}
       if(!r.ok)throw new Error(body.error||("HTTP "+r.status));
       dwsim.connected=true;dwsim.payload=body;
       // Only use explicitly named canonical pump/tank fields; never guess units from generic "flow" keys.
       dwsim.flow=findCanonical(body,["pump_flow_L_min","pumpFlowLMin","pump_flow_l_min"]);
       dwsim.level=findCanonical(body,["tank_level_m","tankLevelM"]);
       dwsim.time=findCanonical(body,["simulation_time_s","simulationTimeS"]);
+      if(dwsim.flow!==null) $("ptFlow").value=String(dwsim.flow);
       $("ptBridgeState").textContent="BRIDGE RESPONDS";$("ptBridgeState").className="state good";
-      $("ptBridgeMessage").textContent=(dwsim.flow!==null||dwsim.level!==null)?"Canonical pump/tank tag(s) detected in the HX1 bridge response.":"HX1 bridge responds, but it has no canonical pump/tank tags. Tank level shown here remains a local model estimate.";
+      $("ptBridgeMessage").textContent=(dwsim.flow!==null||dwsim.level!==null)?"Canonical pump/tank tag(s) detected in the HX1 bridge response.":"The bridge responds, but no canonical pump/tank tags were found. Entered pump flow drives the local level estimate.";
       $("ptRaw").textContent=JSON.stringify(body,null,2);
     } catch(e) {
       dwsim.connected=false;dwsim.flow=null;dwsim.level=null;dwsim.time=null;
       $("ptBridgeState").textContent="NOT CONNECTED";$("ptBridgeState").className="state warn";
-      $("ptBridgeMessage").textContent="No response from the existing local bridge. Start PlantPulse and the bridge at 127.0.0.1:8765. The local model can still be explored independently.";
+      $("ptBridgeMessage").textContent="No response from the pump/tank or HX1 bridge endpoints. Start PlantPulse and the local bridge at 127.0.0.1:8765. The local model can still be explored independently.";
       $("ptRaw").textContent="No bridge response: "+e.message;
     }
     render();
