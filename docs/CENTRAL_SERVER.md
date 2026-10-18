@@ -25,6 +25,14 @@ Pump–tank payload should use explicit units and canonical keys, for example:
 The numbers above are examples, not actual values. The adapter must read the real objects
 and properties from the user's DWSIM flowsheet. Do not fabricate live values.
 
+For the current steady-state pump–tank flowsheet, the confirmed payload shape uses `feed`
+(stream `PUMP`), `discharge` (stream `2`), `pump` (unit operation `PUMP-1`), `tank`
+(unit operation `TANK-1`), and `energy_stream` (stream `E1`). The dashboard shows those
+actual snapshot values. The current model does not provide a changing liquid level, and
+`vessel_volume_m3` must not be presented as a measured tank level. The browser polls the
+central API every four seconds, but new DWSIM values arrive only when the telemetry script
+posts a new snapshot.
+
 HX1 payload should retain the dashboard's established schema when available:
 `hot_in`, `hot_out`, `cold_in`, `cold_out` with `T_C`, `P_Pa`, and `W_kg_s`,
 plus `duty_kW`. Other JSON telemetry is accepted and visible through the API.
