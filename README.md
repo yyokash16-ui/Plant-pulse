@@ -22,7 +22,7 @@ Read [Central Server API and DWSIM adapter contract](docs/CENTRAL_SERVER.md) for
 
 - Central process registry with separate HX1 and Pump–Tank process IDs.
 - Health, process connection status, telemetry timestamps, and stale-data detection.
-- Pump–tank filling estimator for a vertical cylinder with a closed outlet.
+- Steady-state Pump–Tank digital-twin page showing measured feed/discharge stream conditions, pump pressure rise/efficiency/head, tank vessel volume/residence time, and energy-stream duty.
 - Explicit canonical telemetry keys and raw JSON diagnostics.
 - Local-only API; no cloud service or remote listener required.
 
