@@ -1,59 +1,46 @@
 # PlantPulse Central Server — DWSIM adapter contract
 
-This central server is independent of the previous server/bridge. It listens only on
-127.0.0.1:8770. Start it by double-clicking `start_central_server.bat`.
+This server listens only on 127.0.0.1:8770. Start PlantPulse-Central.exe and keep it open.
+
+## Fast continuous connection for the Pump–Tank flowsheet
+
+A DWSIM Script Manager connector is available at:
+`dwsim/PlantPulse_Continuous_Connector.py`
+
+It is designed for the user's steady-state `Tank system.dwxmz` flowsheet and known object tags:
+- Feed material stream: `PUMP`
+- Pump: `PUMP-1`
+- Discharge material stream: `2`
+- Tank: `TANK-1`
+- Energy stream: `E1`
+
+### Setup
+
+1. Start `PlantPulse-Central.exe` and wait for the dashboard to open at `http://127.0.0.1:8770`.
+2. Open `Tank system.dwxmz` in DWSIM.
+3. Open Script Manager and create/open an IronPython script.
+4. Paste the contents of `dwsim/PlantPulse_Continuous_Connector.py` and run it once.
+5. Keep DWSIM and PlantPulse-Central.exe open. The connector attempts to publish a snapshot immediately and then every 2 seconds.
+6. Confirm that the dashboard changes to **DWSIM DATA RECEIVED** and check the last-seen age.
+
+If the connector prints an error in DWSIM, copy the exact error text for troubleshooting. The connector depends on the DWSIM Script Manager exposing the global `Flowsheet` object and on the installed DWSIM build's object property names; it has not been verified on every DWSIM build.
 
 ## Telemetry contract
 
-A DWSIM-side adapter should POST JSON to one of these local endpoints every 1–5 seconds:
-
-- `POST http://127.0.0.1:8770/api/telemetry/hx1`
 - `POST http://127.0.0.1:8770/api/telemetry/pumptank`
+- `POST http://127.0.0.1:8770/api/telemetry/hx1`
 
-Pump–tank payload should use explicit units and canonical keys, for example:
+The dashboard polls the central API every four seconds. The connector is intended to post new snapshots every two seconds, so displayed values should update within a few seconds after successful reads/posts.
 
-```json
-{
-  "process_id": "pumptank",
-  "pump_flow_L_min": 10.0,
-  "tank_level_m": 0.25,
-  "tank_height_m": 2.0,
-  "simulation_time_s": 0.0
-}
-```
-
-The numbers above are examples, not actual values. The adapter must read the real objects
-and properties from the user's DWSIM flowsheet. Do not fabricate live values.
-
-For the current steady-state pump–tank flowsheet, the confirmed payload shape uses `feed`
-(stream `PUMP`), `discharge` (stream `2`), `pump` (unit operation `PUMP-1`), `tank`
-(unit operation `TANK-1`), and `energy_stream` (stream `E1`). The dashboard shows those
-actual snapshot values. The current model does not provide a changing liquid level, and
-`vessel_volume_m3` must not be presented as a measured tank level. The browser polls the
-central API every four seconds, but new DWSIM values arrive only when the telemetry script
-posts a new snapshot.
-
-HX1 payload should retain the dashboard's established schema when available:
-`hot_in`, `hot_out`, `cold_in`, `cold_out` with `T_C`, `P_Pa`, and `W_kg_s`,
-plus `duty_kW`. Other JSON telemetry is accepted and visible through the API.
+The current steady-state model does not provide a changing liquid level. `vessel_volume_m3` is tank vessel volume, not measured liquid level. Residence time is estimated from vessel volume divided by feed volumetric flow; it is not a dynamic tank-level model.
 
 ## API
 
 - `GET /api/health` — server health
-- `GET /api/processes` — central process registry and connection state
+- `GET /api/processes` — process registry and connection state
 - `GET /api/process/hx1/telemetry`
 - `GET /api/process/pumptank/telemetry`
-- `POST /api/telemetry/{hx1|pumptank}` — publish actual telemetry
-- `POST /api/process/{hx1|pumptank}/setpoints` — queue local setpoints for an adapter
+- `POST /api/telemetry/{hx1|pumptank}` — publish telemetry
+- `POST /api/process/{hx1|pumptank}/setpoints` — queue local setpoints
 
-Setpoints are only queued in memory; they are **not** applied to DWSIM until a DWSIM-side
-adapter explicitly reads them and writes the correct manipulated variable. Server state
-resets when the process stops. This server is a local dashboard/API, not a safety system.
-
-## Why the DWSIM adapter is still required
-
-A standalone Python server cannot reliably inspect a running DWSIM flowsheet unless a
-supported DWSIM automation interface or an in-process DWSIM script is connected. Object
-names, property identifiers, and write/recalculation behavior differ by flowsheet. Once the
-pump, tank, and stream object names are known, add an adapter to publish real telemetry.
-This does not require locating or editing the old server file.
+Setpoints are only queued in memory; they are **not** applied to DWSIM. This is a local dashboard/telemetry connector, not a safety system or live plant controller.
