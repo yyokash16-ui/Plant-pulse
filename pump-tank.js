@@ -29,10 +29,14 @@
     set("ptFeedT", value(t,"feed.temperature_K",2,"K") + (Number.isFinite(Number(get(t,"feed.temperature_K"))) ? " ("+fmt(Number(get(t,"feed.temperature_K"))-273.15,2)+" °C)" : ""));
     set("ptFeedP", value(t,"feed.pressure_Pa",0,"Pa") + (Number.isFinite(Number(get(t,"feed.pressure_Pa"))) ? " ("+fmt(Number(get(t,"feed.pressure_Pa"))/100000,3)+" bar)" : ""));
     set("ptFeedMass", value(t,"feed.mass_flow_kg_s",4,"kg/s"));
+    set("ptFeedPTable", value(t,"feed.pressure_Pa",0,"Pa") + (Number.isFinite(Number(get(t,"feed.pressure_Pa"))) ? " ("+fmt(Number(get(t,"feed.pressure_Pa"))/100000,3)+" bar)" : ""));
+    set("ptFeedMassTable", value(t,"feed.mass_flow_kg_s",4,"kg/s"));
     set("ptFeedVol", value(t,"feed.volumetric_flow_m3_s",6,"m³/s") + (Number.isFinite(Number(get(t,"feed.volumetric_flow_m3_s"))) ? " ("+fmt(Number(get(t,"feed.volumetric_flow_m3_s"))*60000,3)+" L/min)" : ""));
     set("ptOutT", value(t,"discharge.temperature_K",2,"K") + (Number.isFinite(Number(get(t,"discharge.temperature_K"))) ? " ("+fmt(Number(get(t,"discharge.temperature_K"))-273.15,2)+" °C)" : ""));
     set("ptOutP", value(t,"discharge.pressure_Pa",0,"Pa") + (Number.isFinite(Number(get(t,"discharge.pressure_Pa"))) ? " ("+fmt(Number(get(t,"discharge.pressure_Pa"))/100000,3)+" bar)" : ""));
     set("ptOutMass", value(t,"discharge.mass_flow_kg_s",4,"kg/s"));
+    set("ptOutPTable", value(t,"discharge.pressure_Pa",0,"Pa") + (Number.isFinite(Number(get(t,"discharge.pressure_Pa"))) ? " ("+fmt(Number(get(t,"discharge.pressure_Pa"))/100000,3)+" bar)" : ""));
+    set("ptOutMassTable", value(t,"discharge.mass_flow_kg_s",4,"kg/s"));
     set("ptOutVol", value(t,"discharge.volumetric_flow_m3_s",6,"m³/s") + (Number.isFinite(Number(get(t,"discharge.volumetric_flow_m3_s"))) ? " ("+fmt(Number(get(t,"discharge.volumetric_flow_m3_s"))*60000,3)+" L/min)" : ""));
     set("ptPumpDP", value(t,"pump.pressure_increase_Pa",0,"Pa") + (Number.isFinite(Number(get(t,"pump.pressure_increase_Pa"))) ? " ("+fmt(Number(get(t,"pump.pressure_increase_Pa"))/100000,3)+" bar)" : ""));
     set("ptPumpEff", value(t,"pump.efficiency_percent",2,"%"));
